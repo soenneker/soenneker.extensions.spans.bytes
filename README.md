@@ -4,7 +4,7 @@
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.extensions.spans.bytes/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.extensions.spans.bytes/actions/workflows/codeql.yml)
 
 # ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Extensions.Spans.Bytes
-Various helpful byte span extension methods.
+Securely clears sensitive bytes held in a `Span<byte>`.
 
 ## Installation
 
@@ -12,15 +12,14 @@ Various helpful byte span extension methods.
 dotnet add package Soenneker.Extensions.Spans.Bytes
 ```
 
-## Quick start
+## Usage
 
 ```csharp
 using Soenneker.Extensions.Spans.Bytes;
 
-// Given an existing Span<byte> named span:
-span.SecureZero();
+Span<byte> key = stackalloc byte[32];
+// use key...
+key.SecureZero();
 ```
 
-## Common operations
-
-- `SecureZero()` - Overwrites the contents of the specified span with zeros in a manner designed to prevent the data from being recovered from memory. Equivalent to `CryptographicOperations.ZeroMemory(Spanbyte)`.
+`SecureZero()` mutates the supplied span in place and is exactly a convenience call to `CryptographicOperations.ZeroMemory`. Unlike an ordinary `Clear()`, the runtime guarantees the write will not be optimized away. It is appropriate for keys and other secrets once they are no longer needed.
